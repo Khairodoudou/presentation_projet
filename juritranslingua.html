@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JuriTransLingua — Plateforme de traduction juridique</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --cream: #f5f2eb;
+    --gold: #c9a84c;
+    --gold-light: #e8d9a8;
+    --deep: #1a1f2e;
+    --accent: #2d5a4e;
+    --muted: #6b6f7a;
+    --border: rgba(201,168,76,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(245,242,235,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--gold); }
+
+  nav ul {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  nav ul a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink);
+    color: var(--cream) !important;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.1em !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent) !important; color: var(--cream) !important; }
+
+  /* Burger */
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+    z-index: 300;
+  }
+  .burger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+  .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(245,242,235,0.98);
+    backdrop-filter: blur(16px);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .mobile-menu.open {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mobile-menu a {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu .mob-cta {
+    background: var(--ink);
+    color: var(--cream) !important;
+    padding: 0.9rem 2.5rem;
+    border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    padding: 10rem 4rem 6rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--gold);
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s ease forwards;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 440px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s ease forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s ease forwards;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 1rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.25s, transform 0.15s;
+    border-radius: 2px;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    padding: 1rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.25s;
+    border-radius: 2px;
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--cream); }
+  .hero-right {
+    background: var(--deep);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.4s ease forwards;
+  }
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 60%, rgba(201,168,76,0.15) 0%, transparent 60%);
+  }
+  .hero-visual {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 3rem;
+  }
+  .arabic-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: rgba(201,168,76,0.3);
+    line-height: 1.4;
+    position: absolute;
+    top: 3rem;
+    right: 2rem;
+    direction: rtl;
+    pointer-events: none;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 380px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 1.8rem 1.5rem;
+    text-align: left;
+    transition: background 0.3s;
+  }
+  .stat-card:hover { background: rgba(255,255,255,0.08); }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .sep-line { flex: 1; height: 1px; background: var(--border); }
+  .sep-text {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── ABOUT PROJECT ── */
+  .about-project {
+    padding: 6rem 4rem;
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-project::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-left {}
+  .about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+  }
+  .about-block {
+    border-left: 2px solid var(--border);
+    padding-left: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .about-block:hover { border-color: var(--gold); }
+  .about-block h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .about-block p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .about-quote {
+    background: var(--deep);
+    border-radius: 4px;
+    padding: 2rem 2.5rem;
+    margin-top: 2rem;
+    position: relative;
+  }
+  .about-quote::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.2;
+    position: absolute;
+    top: -1rem;
+    left: 1.5rem;
+    line-height: 1;
+  }
+  .about-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(245,242,235,0.8);
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+  .about-quote cite {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--gold);
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── SECTION GENERIC ── */
+  .section { padding: 6rem 4rem; }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  /* ── PROBLEM ── */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 4rem;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .problem-item {
+    background: var(--cream);
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: background 0.25s;
+  }
+  .problem-item:hover { background: white; }
+  .problem-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.15);
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    line-height: 1;
+  }
+  .problem-icon {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+  }
+  .problem-item h3 { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; margin-bottom: 0.7rem; color: var(--ink); }
+  .problem-item p { font-size: 0.85rem; line-height: 1.65; color: var(--muted); }
+
+  /* ── SOLUTION ── */
+  .solution {
+    background: var(--deep);
+    color: var(--cream);
+    padding: 6rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .solution::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .solution .section-label { color: var(--gold-light); }
+  .solution h2 { color: var(--cream); }
+  .solution-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    margin-top: 4rem;
+    align-items: start;
+  }
+  .solution-features { display: flex; flex-direction: column; gap: 2rem; }
+  .feature {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+  .feature:last-child { border-bottom: none; }
+  .feature-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin-top: 0.4rem; flex-shrink: 0; }
+  .feature h4 { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; color: var(--cream); margin-bottom: 0.4rem; }
+  .feature p { font-size: 0.87rem; line-height: 1.65; color: rgba(245,242,235,0.5); }
+
+  /* ── ROLES ── */
+  .roles { padding: 6rem 4rem; background: white; }
+  .roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+  .role-card { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: box-shadow 0.3s, transform 0.2s; }
+  .role-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.08); transform: translateY(-3px); }
+  .role-header { padding: 2rem; display: flex; align-items: center; gap: 1rem; }
+  .role-header.client { background: rgba(45,90,78,0.08); }
+  .role-header.traducteur { background: rgba(201,168,76,0.1); }
+  .role-header.admin { background: rgba(26,31,46,0.06); }
+  .role-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .role-icon.client { background: var(--accent); color: white; }
+  .role-icon.traducteur { background: var(--gold); color: white; }
+  .role-icon.admin { background: var(--deep); color: white; }
+  .role-header h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); }
+  .role-header span { font-size: 0.75rem; color: var(--muted); display: block; }
+  .role-body { padding: 1.5rem 2rem 2rem; }
+  .role-pages { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .role-pages li { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 0.6rem; }
+  .role-pages li::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  /* ── FLOW ── */
+  .flow { padding: 6rem 4rem; background: var(--cream); }
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    margin-top: 4rem;
+    position: relative;
+  }
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    top: 2.2rem; left: 4%; right: 4%;
+    height: 1px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .flow-step { text-align: center; padding: 0 0.5rem; position: relative; z-index: 1; }
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.2rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .flow-step:hover .step-num { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+  .flow-step h4 { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; }
+  .flow-step p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── TECH STACK ── */
+  .tech { padding: 6rem 4rem; background: white; }
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 4rem;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .tech-item { background: white; padding: 2rem 1.5rem; transition: background 0.2s; }
+  .tech-item:hover { background: var(--cream); }
+  .tech-layer { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 0.8rem; }
+  .tech-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; }
+  .tech-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── BMC ── */
+  .bmc-section {
+    padding: 6rem 4rem;
+    background: var(--cream);
+  }
+  .bmc-wrapper {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+  }
+  .bmc-header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+    border-bottom: 2px solid var(--border);
+  }
+  .bmc-cell {
+    padding: 1.4rem 1.5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .bmc-cell:last-child { border-right: none; }
+  .bmc-cell-title {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .bmc-cell-title .bmc-icon { font-size: 0.85rem; }
+  .bmc-cell ul { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+  .bmc-cell ul li {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.4;
+    padding-left: 0.9rem;
+    position: relative;
+  }
+  .bmc-cell ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .bmc-middle-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+    border-bottom: 2px solid var(--border);
+  }
+  .bmc-vp-col {
+    grid-row: 1 / 3;
+    border-right: 1px solid var(--border);
+    padding: 1.4rem 1.5rem;
+    background: rgba(201,168,76,0.03);
+  }
+  .bmc-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 120px;
+  }
+  .bmc-bottom-cell {
+    padding: 1.4rem 1.5rem;
+    border-right: 1px solid var(--border);
+  }
+  .bmc-bottom-cell:last-child { border-right: none; }
+  .bmc-note {
+    font-size: 0.72rem;
+    color: rgba(201,168,76,0.5);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Full BMC layout */
+  .bmc-grid {
+    display: grid;
+    grid-template-areas:
+      "kp ka vp rc cs"
+      "kp kr vp ch cs"
+      "cost cost rev rev rev";
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bmc-block {
+    background: white;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+    margin: 1px;
+  }
+  .bmc-block:hover { background: #fdfcf8; }
+  .bmc-block.kp { grid-area: kp; }
+  .bmc-block.ka { grid-area: ka; }
+  .bmc-block.vp { grid-area: vp; background: rgba(201,168,76,0.03); }
+  .bmc-block.rc { grid-area: rc; }
+  .bmc-block.cs { grid-area: cs; }
+  .bmc-block.kr { grid-area: kr; }
+  .bmc-block.ch { grid-area: ch; }
+  .bmc-block.cost { grid-area: cost; background: rgba(26,31,46,0.02); }
+  .bmc-block.rev { grid-area: rev; background: rgba(45,90,78,0.03); }
+
+  .bmc-t {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .bmc-items { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+  .bmc-items li {
+    font-size: 0.77rem;
+    color: var(--muted);
+    line-height: 1.45;
+    padding-left: 0.85rem;
+    position: relative;
+  }
+  .bmc-items li::before { content: '·'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+  .bmc-items li strong { color: var(--ink); font-weight: 500; }
+
+  /* ── CTA FOOTER ── */
+  .cta-section {
+    background: var(--deep);
+    padding: 7rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 65%);
+  }
+  .cta-section > * { position: relative; z-index: 1; }
+  .cta-section .section-label { justify-content: center; color: var(--gold-light); margin-bottom: 1.5rem; }
+  .cta-section .section-label::after { display: none; }
+  .cta-section .section-label::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--gold); }
+  .cta-section h2 { color: var(--cream); max-width: 600px; margin: 0 auto 1.5rem; }
+  .cta-section p { font-size: 1rem; color: rgba(245,242,235,0.5); max-width: 480px; margin: 0 auto 3rem; line-height: 1.7; }
+
+  footer {
+    background: var(--ink);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: rgba(245,242,235,0.6); }
+  .footer-logo span { color: var(--gold); }
+  footer p { font-size: 0.78rem; color: rgba(245,242,235,0.3); letter-spacing: 0.05em; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    .burger { display: flex; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-right { min-height: 300px; }
+    .hero-left { padding: 8rem 1.5rem 3rem; }
+    .section, .solution, .roles, .flow, .tech, .cta-section, .bmc-section, .about-project { padding: 4rem 1.5rem; }
+    .problem-grid, .roles-grid, .tech-grid { grid-template-columns: 1fr; }
+    .solution-content { grid-template-columns: 1fr; gap: 3rem; }
+    .flow-steps { grid-template-columns: repeat(2, 1fr); }
+    .flow-steps::before { display: none; }
+    .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .bmc-grid {
+      grid-template-areas:
+        "vp"
+        "cs"
+        "rc"
+        "ch"
+        "kp"
+        "ka"
+        "kr"
+        "cost"
+        "rev";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+    .sep { padding: 2rem 1.5rem; }
+    .sep-text { font-size: 0.62rem; white-space: normal; text-align: center; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">JuriTrans<span>Lingua</span></a>
+  <ul>
+    <li><a href="#projet">Projet</a></li>
+    <li><a href="#probleme">Problème</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#roles">Rôles</a></li>
+    <li><a href="#flux">Flux</a></li>
+    <li><a href="#tech">Tech</a></li>
+    <li><a href="#bmc">BMC</a></li>
+    <li><a href="#contact" class="nav-cta">Démarrer</a></li>
+  </ul>
+  <button class="burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#projet" class="mob-link">Projet</a>
+  <a href="#probleme" class="mob-link">Problème</a>
+  <a href="#solution" class="mob-link">Solution</a>
+  <a href="#roles" class="mob-link">Rôles</a>
+  <a href="#flux" class="mob-link">Flux</a>
+  <a href="#tech" class="mob-link">Tech</a>
+  <a href="#bmc" class="mob-link">BMC</a>
+  <a href="#contact" class="mob-cta">Démarrer →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Projet universitaire · Univ. Hassiba Benbouali · 2025–2026</div>
+    <h1>La traduction juridique,<br><em>enfin numérique.</em></h1>
+    <p class="hero-desc">Une plateforme qui connecte les citoyens algériens aux traducteurs assermentés — sans déplacement, sans opacité, sans attente interminable.</p>
+    <div class="hero-actions">
+      <a href="#solution" class="btn-primary">Découvrir la solution</a>
+      <a href="#flux" class="btn-secondary">Comment ça marche</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="arabic-text">ترجمة<br>قانونية</div>
+    <div class="hero-visual">
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-num">3</span><span class="stat-label">Rôles utilisateurs</span></div>
+        <div class="stat-card"><span class="stat-num">6+</span><span class="stat-label">Langues supportées</span></div>
+        <div class="stat-card"><span class="stat-num">100%</span><span class="stat-label">En ligne</span></div>
+        <div class="stat-card"><span class="stat-num">0</span><span class="stat-label">Déplacement requis</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEPARATOR -->
+<div class="sep">
+  <div class="sep-line"></div>
+  <span class="sep-text">Université Hassiba Benbouali · Faculté des Langues Étrangères · Département du Français</span>
+  <div class="sep-line"></div>
+</div>
+
+<!-- ABOUT PROJECT -->
+<section class="about-project" id="projet">
+  <p class="section-label reveal">Présentation du projet</p>
+  <h2 class="reveal">JuriTransLingua — De l'idée<br>à la plateforme</h2>
+
+  <div class="about-inner" style="margin-top:3rem">
+    <div class="about-left">
+      <p class="reveal" style="font-size:1rem;line-height:1.8;color:var(--muted);margin-bottom:2rem">
+        <strong style="color:var(--ink)">JuriTransLingua</strong> est une marketplace de traduction juridique en ligne, pensée spécifiquement pour le contexte algérien. Elle met en relation des citoyens, étudiants et entreprises avec des traducteurs assermentés vérifiés, le tout sans déplacement physique.
+      </p>
+      <p class="reveal" style="font-size:0.95rem;line-height:1.8;color:var(--muted);margin-bottom:2rem">
+        Le projet répond à un vide numérique réel : en Algérie, obtenir une traduction juridique certifiée implique aujourd'hui un parcours physique complexe, une opacité totale sur les prix et délais, et l'exclusion de toute la diaspora algérienne à l'étranger.
+      </p>
+      <p class="reveal" style="font-size:0.95rem;line-height:1.8;color:var(--muted)">
+        La plateforme gère l'intégralité du processus : dépôt du document, sélection du traducteur, paiement sécurisé (CCP ou carte internationale), suivi en temps réel et téléchargement du PDF traduit. L'administrateur valide les accréditations légales des traducteurs avant toute activation.
+      </p>
+
+      <div class="about-quote reveal">
+        <p>Comme Upwork, mais pour la traduction juridique en Algérie — avec un système de paiement intégré et des traducteurs légalement reconnus.</p>
+        <cite>— Vision du projet, Département du Français, Univ. Hassiba Benbouali</cite>
+      </div>
+    </div>
+
+    <div class="about-right">
+      <div class="about-block reveal">
+        <h4>🎯 Problème ciblé</h4>
+        <p>L'absence d'une solution numérique pour la traduction juridique certifiée en Algérie : déplacements obligatoires, prix opaques, délais imprévisibles et exclusion de la diaspora.</p>
+      </div>
+      <div class="about-block reveal">
+        <h4>💡 Solution proposée</h4>
+        <p>Une marketplace tripartite (client / traducteur / admin) entièrement en ligne, avec gestion du paiement, des documents et du suivi en temps réel, adaptée aux contraintes locales (SATIM / CCP).</p>
+      </div>
+      <div class="about-block reveal">
+        <h4>👥 Public cible</h4>
+        <p>Citoyens algériens, étudiants souhaitant partir à l'étranger, entreprises ayant des documents bilingues à certifier, et diaspora algérienne résidant hors d'Algérie.</p>
+      </div>
+      <div class="about-block reveal">
+        <h4>🌍 Langues supportées</h4>
+        <p>Arabe, Français, Anglais, Espagnol, Allemand, Turc — avec extension possible selon la demande.</p>
+      </div>
+      <div class="about-block reveal">
+        <h4>🎓 Encadreur</h4>
+        <p><strong style="color:var(--ink)">M. Farouk Afounas</strong> — Maître de conférences, Département du Français, Faculté des Langues Étrangères, Université Hassiba Benbouali de Chlef.</p>
+      </div>
+      <div class="about-block reveal">
+        <h4>👩‍💻 Réalisatrice</h4>
+        <p><strong style="color:var(--ink)">Karima Benhadji</strong> — Étudiante, Département du Français, Université Hassiba Benbouali de Chlef. Année universitaire 2025–2026.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="probleme" style="background:var(--cream)">
+  <p class="section-label reveal">Le problème</p>
+  <h2 class="reveal">Ce qui bloque les Algériens<br>aujourd'hui</h2>
+  <p class="reveal" style="max-width:520px;color:var(--muted);line-height:1.75;margin-bottom:0">
+    Obtenir une traduction juridique certifiée en Algérie est un parcours du combattant : déplacements physiques, manque de transparence, délais incertains.
+  </p>
+  <div class="problem-grid">
+    <div class="problem-item reveal"><span class="problem-num">01</span><div class="problem-icon">🚶</div><h3>Déplacement obligatoire</h3><p>Impossible de soumettre un document à distance. Le client doit se rendre physiquement au bureau de traduction.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">02</span><div class="problem-icon">🔍</div><h3>Trouver un traducteur = galère</h3><p>Aucun annuaire centralisé des traducteurs assermentés. La recherche se fait par bouche à oreille ou réseaux sociaux.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">03</span><div class="problem-icon">💰</div><h3>Zéro transparence</h3><p>Les prix et délais varient d'un bureau à l'autre, sans aucune grille de référence accessible au public.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">04</span><div class="problem-icon">⏳</div><h3>Délais imprévisibles</h3><p>Les étudiants pressés de partir à l'étranger ne peuvent pas se permettre d'attendre des semaines sans visibilité.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">05</span><div class="problem-icon">🌍</div><h3>Diaspora laissée de côté</h3><p>Les Algériens résidant à l'étranger n'ont aucun moyen simple d'obtenir des traductions reconnues en Algérie.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">06</span><div class="problem-icon">📋</div><h3>Aucun suivi de commande</h3><p>Une fois le document déposé, le client est dans le flou total quant à l'avancement de sa traduction.</p></div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <p class="section-label reveal">Notre réponse</p>
+  <h2 class="reveal">Une marketplace dédiée<br>à la traduction juridique</h2>
+  <div class="solution-content">
+    <div class="solution-features">
+      <div class="feature reveal"><div class="feature-dot"></div><div><h4>Tout en ligne, sans déplacement</h4><p>Upload du document, choix du traducteur, paiement et réception — tout se fait depuis chez soi, en quelques clics.</p></div></div>
+      <div class="feature reveal"><div class="feature-dot"></div><div><h4>Traducteurs assermentés certifiés</h4><p>Chaque traducteur est vérifié par l'admin avant d'accéder à la plateforme. Leurs accréditations légales sont contrôlées.</p></div></div>
+      <div class="feature reveal"><div class="feature-dot"></div><div><h4>Documents 100% sécurisés</h4><p>Stockage chiffré sur serveur sécurisé. Le document traduit n'est accessible que lorsque le paiement est confirmé.</p></div></div>
+      <div class="feature reveal"><div class="feature-dot"></div><div><h4>Paiement adapté à l'Algérie</h4><p>Paiement par CCP pour les résidents, et par carte bancaire internationale pour la diaspora à l'étranger.</p></div></div>
+      <div class="feature reveal"><div class="feature-dot"></div><div><h4>6 langues disponibles</h4><p>Arabe, français, anglais, espagnol, allemand, turc — avec extension possible selon la demande du marché.</p></div></div>
+    </div>
+    <div class="reveal" style="align-self:center">
+      <div style="border:1px solid rgba(201,168,76,0.2);border-radius:6px;padding:2.5rem;background:rgba(255,255,255,0.04)">
+        <p style="font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:rgba(245,242,235,0.5);margin-bottom:2rem;line-height:1.7">"Comme Upwork, mais pour la traduction juridique en Algérie — avec un système de paiement intégré et des traducteurs légalement reconnus."</p>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div style="display:flex;align-items:center;gap:1rem">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--gold);font-family:'Playfair Display',serif;font-weight:700">K</div>
+            <div><p style="font-size:0.88rem;font-weight:500;color:var(--cream)">Karima Benhadji</p><p style="font-size:0.75rem;color:rgba(245,242,235,0.35)">Étudiante — Réalisatrice du projet</p></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--gold);font-family:'Playfair Display',serif;font-weight:700">F</div>
+            <div><p style="font-size:0.88rem;font-weight:500;color:var(--cream)">Farouk Afounas</p><p style="font-size:0.75rem;color:rgba(245,242,235,0.35)">Encadreur — Maître de conférences</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles" id="roles">
+  <p class="section-label reveal">Architecture utilisateurs</p>
+  <h2 class="reveal">Trois rôles, une expérience<br>pensée pour chacun</h2>
+  <div class="roles-grid">
+    <div class="role-card reveal">
+      <div class="role-header client"><div class="role-icon client">👤</div><div><h3>Client</h3><span>Citoyen, étudiant, entreprise, diaspora</span></div></div>
+      <div class="role-body"><ul class="role-pages">
+        <li>Tableau de bord — mes commandes</li>
+        <li>Nouvelle commande — upload document</li>
+        <li>Choisir traducteur (filtres langue/wilaya)</li>
+        <li>Profil traducteur — avis & tarifs</li>
+        <li>Paiement en ligne (CCP / carte)</li>
+        <li>Suivi commande en temps réel</li>
+        <li>Téléchargement PDF après paiement</li>
+        <li>Laisser un avis / noter</li>
+        <li>Mon profil — infos personnelles</li>
+      </ul></div>
+    </div>
+    <div class="role-card reveal">
+      <div class="role-header traducteur"><div class="role-icon traducteur">📜</div><div><h3>Traducteur</h3><span>Assermenté, vérifié par l'admin</span></div></div>
+      <div class="role-body"><ul class="role-pages">
+        <li>Tableau de bord — commandes reçues</li>
+        <li>Profil professionnel (langues, wilaya, tarifs)</li>
+        <li>Détail commande — télécharger document source</li>
+        <li>Envoyer traduction — upload PDF final</li>
+        <li>Mes revenus — historique paiements</li>
+        <li>Mes avis — évaluations reçues</li>
+        <li>Disponibilité — activer / désactiver</li>
+        <li>Gestion du profil & documents légaux</li>
+      </ul></div>
+    </div>
+    <div class="role-card reveal">
+      <div class="role-header admin"><div class="role-icon admin">🛡️</div><div><h3>Administrateur</h3><span>Accès total — gestion de la plateforme</span></div></div>
+      <div class="role-body"><ul class="role-pages">
+        <li>Dashboard — statistiques globales</li>
+        <li>Gestion utilisateurs (clients & traducteurs)</li>
+        <li>Validation traducteurs assermentés</li>
+        <li>Commissions — suivi financier</li>
+        <li>Signalements — litiges & fraudes</li>
+        <li>Rapports & export de données</li>
+        <li>Configuration système (langues, tarifs)</li>
+        <li>Logs & audit de sécurité</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="flow" id="flux">
+  <p class="section-label reveal">Parcours utilisateur</p>
+  <h2 class="reveal">Du dépôt au téléchargement<br>en 6 étapes simples</h2>
+  <div class="flow-steps">
+    <div class="flow-step reveal"><div class="step-num">1</div><h4>Upload</h4><p>Le client dépose son document (PDF, Word, image) sur la plateforme</p></div>
+    <div class="flow-step reveal"><div class="step-num">2</div><h4>Choix</h4><p>Il choisit un traducteur assermenté selon la langue et la wilaya</p></div>
+    <div class="flow-step reveal"><div class="step-num">3</div><h4>Paiement</h4><p>Paiement sécurisé en ligne via CCP ou carte bancaire</p></div>
+    <div class="flow-step reveal"><div class="step-num">4</div><h4>Traduction</h4><p>Le traducteur reçoit le doc, réalise la traduction et l'envoie</p></div>
+    <div class="flow-step reveal"><div class="step-num">5</div><h4>Livraison</h4><p>Le PDF traduit est débloqué automatiquement après confirmation</p></div>
+    <div class="flow-step reveal"><div class="step-num">6</div><h4>Évaluation</h4><p>Le client note le traducteur — le traducteur reçoit sa rémunération</p></div>
+  </div>
+  <div class="reveal" style="margin-top:4rem;display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap">
+    <div style="background:var(--ink);color:var(--cream);padding:0.6rem 1.2rem;font-size:0.78rem;font-weight:500;letter-spacing:0.05em;border-radius:2px 0 0 2px">En attente</div>
+    <div style="width:24px;height:1px;background:var(--gold)"></div>
+    <div style="background:rgba(201,168,76,0.15);color:var(--gold);padding:0.6rem 1.2rem;font-size:0.78rem;font-weight:500;letter-spacing:0.05em;border:1px solid var(--gold)">Payée</div>
+    <div style="width:24px;height:1px;background:var(--gold)"></div>
+    <div style="background:rgba(45,90,78,0.12);color:var(--accent);padding:0.6rem 1.2rem;font-size:0.78rem;font-weight:500;letter-spacing:0.05em;border:1px solid rgba(45,90,78,0.3)">En cours</div>
+    <div style="width:24px;height:1px;background:var(--gold)"></div>
+    <div style="background:rgba(45,90,78,0.12);color:var(--accent);padding:0.6rem 1.2rem;font-size:0.78rem;font-weight:500;letter-spacing:0.05em;border:1px solid rgba(45,90,78,0.3)">Livrée</div>
+    <div style="width:24px;height:1px;background:var(--gold)"></div>
+    <div style="background:var(--accent);color:white;padding:0.6rem 1.2rem;font-size:0.78rem;font-weight:500;letter-spacing:0.05em;border-radius:0 2px 2px 0">Terminée</div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech" id="tech">
+  <p class="section-label reveal">Architecture technique</p>
+  <h2 class="reveal">TALL Stack &amp; outils modernes —<br>une base robuste</h2>
+  <div class="tech-grid">
+    <div class="tech-item reveal">
+      <p class="tech-layer">Framework Backend</p>
+      <p class="tech-name">Laravel 11</p>
+      <p class="tech-desc">Cœur du projet en PHP 8.2+. Routing, ORM Eloquent, queues, événements et API REST.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Admin Panel</p>
+      <p class="tech-name">Filament v4</p>
+      <p class="tech-desc">Construction rapide de la lоuchе de contrôle admin : tables, formulaires, graphiques.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Authentification</p>
+      <p class="tech-name">Laravel Breeze</p>
+      <p class="tech-desc">Inscription, connexion, profil — avec gestion des rôles via spatie/laravel-permission.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Réactivité Frontend</p>
+      <p class="tech-name">Livewire v3 + Volt</p>
+      <p class="tech-desc">Composants interactifs côté serveur sans JavaScript complexe (pas de React, pas de Vue).</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Styling</p>
+      <p class="tech-name">Tailwind CSS v3</p>
+      <p class="tech-desc">Design responsive et utilitaire, avec FontAwesome 7 pour les icônes.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Build Tool</p>
+      <p class="tech-name">Vite 5</p>
+      <p class="tech-desc">Compilation ultra-rapide des assets CSS et JS — HMR en développement.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Base de données</p>
+      <p class="tech-name">MySQL</p>
+      <p class="tech-desc">Base relationnelle pour gérer les utilisateurs, commandes, paiements et documents.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Paiement local</p>
+      <p class="tech-name">SATIM / CCP</p>
+      <p class="tech-desc">Intégration du système de paiement électronique algérien + carte bancaire internationale.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Logs & Audit</p>
+      <p class="tech-name">spatie/activitylog</p>
+      <p class="tech-desc">Traçabilité complète de toutes les actions effectuées dans la plateforme.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Permissions</p>
+      <p class="tech-name">spatie/permission</p>
+      <p class="tech-desc">Système de rôles et permissions à 3 niveaux : client, traducteur, admin.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Stockage fichiers</p>
+      <p class="tech-name">Laravel Storage</p>
+      <p class="tech-desc">Gestion sécurisée des documents (originaux & traduits) avec accès contrôlé après paiement.</p>
+    </div>
+    <div class="tech-item reveal">
+      <p class="tech-layer">Hébergement</p>
+      <p class="tech-name">VPS + Nginx</p>
+      <p class="tech-desc">Serveur dédié avec reverse proxy, SSL/TLS et domaine .dz officiel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BMC -->
+<section class="bmc-section" id="bmc">
+  <p class="section-label reveal">Modèle d'affaires</p>
+  <h2 class="reveal">Business Model Canvas —<br>JuriTransLingua</h2>
+  <p class="reveal" style="color:var(--muted);font-size:0.9rem;line-height:1.7;max-width:580px;margin-bottom:0">
+    Une vue structurée des 9 blocs constitutifs du modèle économique de la plateforme, adaptée au marché algérien de la traduction juridique.
+  </p>
+
+  <div class="bmc-grid reveal" style="margin-top:3rem">
+
+    <!-- Partenaires clés -->
+    <div class="bmc-block kp">
+      <p class="bmc-t">🤝 Partenaires clés</p>
+      <ul class="bmc-items">
+        <li><strong>Ministère de la Justice (DG)</strong> — légitimité des traducteurs assermentés</li>
+        <li><strong>Barreau d'Algérie</strong> — réseau de traducteurs juridiques accrédités</li>
+        <li><strong>SATIM / Algérie Poste</strong> — partenaires de paiement électronique local</li>
+        <li><strong>Universités algériennes</strong> — canal d'acquisition étudiants (bourses, visa)</li>
+        <li><strong>Consulats & ambassades</strong> — demande récurrente de documents traduits</li>
+        <li><strong>Fournisseurs cloud</strong> — hébergement et stockage sécurisé des documents</li>
+        <li><strong>Associations de la diaspora</strong> — accès aux Algériens à l'étranger</li>
+      </ul>
+    </div>
+
+    <!-- Activités clés -->
+    <div class="bmc-block ka">
+      <p class="bmc-t">⚙️ Activités clés</p>
+      <ul class="bmc-items">
+        <li>Développement & maintenance de la plateforme web (Laravel / TALL)</li>
+        <li>Vérification & validation des traducteurs assermentés</li>
+        <li>Gestion des commandes, paiements et litiges</li>
+        <li>Acquisition clients (SEO, réseaux sociaux, partenariats uni.)</li>
+        <li>Support client et résolution des conflits</li>
+        <li>Contrôle qualité des traductions livrées</li>
+        <li>Conformité légale et sécurité des données</li>
+      </ul>
+    </div>
+
+    <!-- Proposition de valeur -->
+    <div class="bmc-block vp">
+      <p class="bmc-t" style="color:var(--gold);font-size:0.72rem">💎 Proposition de valeur</p>
+      <ul class="bmc-items" style="margin-bottom:1rem">
+        <li><strong>Pour les clients :</strong> accès 100% en ligne à des traducteurs vérifiés, sans déplacement, avec suivi en temps réel et prix transparents</li>
+        <li><strong>Pour la diaspora :</strong> première solution permettant d'obtenir une traduction certifiée depuis l'étranger</li>
+        <li><strong>Pour les traducteurs :</strong> visibilité augmentée, gestion simplifiée des commandes et paiement sécurisé</li>
+        <li><strong>Sécurité :</strong> documents chiffrés, accès conditionné au paiement confirmé</li>
+        <li><strong>Confiance :</strong> traducteurs légalement accrédités et évalués par la communauté</li>
+        <li><strong>Rapidité :</strong> processus digitalisé qui réduit les délais de plusieurs semaines à quelques jours</li>
+      </ul>
+      <div style="background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:3px;padding:0.7rem;margin-top:0.8rem">
+        <p style="font-size:0.72rem;color:var(--gold);font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.3rem">Positionnement</p>
+        <p style="font-size:0.78rem;color:var(--muted)">Marketplace spécialisée · Traduction juridique · Algérie + diaspora · 6 langues</p>
+      </div>
+    </div>
+
+    <!-- Relation client -->
+    <div class="bmc-block rc">
+      <p class="bmc-t">❤️ Relation client</p>
+      <ul class="bmc-items">
+        <li>Interface self-service intuitive (tableau de bord client)</li>
+        <li>Suivi en temps réel des commandes (statuts)</li>
+        <li>Système de notation & avis clients</li>
+        <li>Support par messagerie intégrée</li>
+        <li>Notifications email & SMS à chaque étape</li>
+        <li>FAQ et centre d'aide en ligne</li>
+      </ul>
+    </div>
+
+    <!-- Segments clients -->
+    <div class="bmc-block cs">
+      <p class="bmc-t">👥 Segments clients</p>
+      <ul class="bmc-items">
+        <li><strong>Étudiants</strong> — dossiers visa, bourses à l'étranger, équivalences</li>
+        <li><strong>Particuliers</strong> — documents d'état civil, actes notariés</li>
+        <li><strong>Diaspora algérienne</strong> — résidant en Europe, Amérique du Nord, pays du Golfe</li>
+        <li><strong>PME & entreprises</strong> — contrats, brevets, correspondances juridiques</li>
+        <li><strong>Cabinets d'avocats</strong> — pièces judiciaires multilingues</li>
+        <li><strong>Expatriés étrangers</strong> en Algérie — documents officiels</li>
+      </ul>
+    </div>
+
+    <!-- Ressources clés -->
+    <div class="bmc-block kr">
+      <p class="bmc-t">🔑 Ressources clés</p>
+      <ul class="bmc-items">
+        <li><strong>Plateforme web</strong> — codebase Laravel / TALL Stack</li>
+        <li><strong>Base de traducteurs</strong> — réseau vérifiés et accrédités</li>
+        <li><strong>Infrastruct. cloud</strong> — serveur VPS, stockage sécurisé</li>
+        <li><strong>Données & historique</strong> — profils, avis, commandes</li>
+        <li><strong>Équipe</strong> — développement, modération, support</li>
+        <li><strong>Marque JuriTransLingua</strong> — confiance et légitimité</li>
+      </ul>
+    </div>
+
+    <!-- Canaux -->
+    <div class="bmc-block ch">
+      <p class="bmc-t">📡 Canaux</p>
+      <ul class="bmc-items">
+        <li>Site web (langua.dz) — canal principal</li>
+        <li>Réseaux sociaux (Facebook, Instagram, LinkedIn)</li>
+        <li>Partenariats avec universités algériennes</li>
+        <li>Groupes Facebook de la diaspora</li>
+        <li>Référencement SEO (arabe + français)</li>
+        <li>Bouche à oreille & programme de parrainage</li>
+      </ul>
+    </div>
+
+    <!-- Coûts -->
+    <div class="bmc-block cost">
+      <p class="bmc-t">💸 Structure de coûts</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <ul class="bmc-items">
+          <li><strong>Coûts fixes :</strong> hébergement VPS, nom de domaine .dz, certificat SSL, licences logicielles</li>
+          <li><strong>Développement :</strong> maintenance, mises à jour, corrections de bugs, nouvelles fonctionnalités</li>
+          <li><strong>Marketing :</strong> publicité en ligne, gestion réseaux sociaux, partenariats</li>
+        </ul>
+        <ul class="bmc-items">
+          <li><strong>Support :</strong> équipe modération, validation traducteurs, gestion litiges</li>
+          <li><strong>Frais paiement :</strong> commissions SATIM, frais bancaires sur transactions</li>
+          <li><strong>Conformité :</strong> conseil juridique, RGPD / loi algérienne sur la protection des données</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Revenus -->
+    <div class="bmc-block rev">
+      <p class="bmc-t">💰 Sources de revenus</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+        <div>
+          <p style="font-size:0.72rem;font-weight:600;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Principal</p>
+          <ul class="bmc-items">
+            <li><strong>Commission par commande</strong> — 10 à 20% du prix de la traduction prélevée sur chaque transaction réussie</li>
+            <li>Tarification proportionnelle à la paire de langues et au type de document</li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:0.72rem;font-weight:600;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Secondaire</p>
+          <ul class="bmc-items">
+            <li><strong>Abonnements traducteurs</strong> — offre premium : mise en avant du profil, badge vérifié, statistiques avancées</li>
+            <li><strong>Services urgents</strong> — supplément pour traduction express (24h/48h)</li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:0.72rem;font-weight:600;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Futur</p>
+          <ul class="bmc-items">
+            <li><strong>API B2B</strong> — accès plateforme pour cabinets d'avocats, entreprises & institutions</li>
+            <li><strong>Publicité ciblée</strong> — espaces sponsorisés pour formations juridiques et services associés</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA FOOTER -->
+<section class="cta-section" id="contact">
+  <p class="section-label reveal">Projet académique 2025–2026</p>
+  <h2 class="reveal">Digitalisez la traduction juridique<br>en Algérie.</h2>
+  <p class="reveal">Un projet porté par une étudiante de l'Université Hassiba Benbouali de Chlef, Faculté des langues étrangères, Département du français, sous l'encadrement de M. Farouk Afounas.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap" class="reveal">
+    <a href="mailto:benhadjikarima208@gmail.com" class="btn-primary">Karima Benhadji — Réalisatrice</a>
+    <a href="mailto:interpretationworld@gmail.com" class="btn-secondary" style="border-color:rgba(245,242,235,0.3);color:var(--cream)">Farouk Afounas — Encadreur</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">JuriTrans<span>Lingua</span></div>
+  <p>Université Hassiba Benbouali · Chlef · 2025–2026</p>
+  <p>Département du Français · Projet numérique</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => { entry.target.classList.add('visible'); }, 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { target.scrollIntoView({ behavior: 'smooth' }); closeMobileMenu(); }
+    });
+  });
+
+  // Burger menu
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  function closeMobileMenu() {
+    burger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  burger.addEventListener('click', () => {
+    const isOpen = burger.classList.toggle('open');
+    if (isOpen) {
+      mobileMenu.style.display = 'flex';
+      setTimeout(() => mobileMenu.classList.add('open'), 10);
+      document.body.style.overflow = 'hidden';
+    } else {
+      closeMobileMenu();
+    }
+  });
+
+  // Close on link click
+  document.querySelectorAll('.mob-link, .mob-cta').forEach(a => {
+    a.addEventListener('click', closeMobileMenu);
+  });
+</script>
+</body>
+</html>
