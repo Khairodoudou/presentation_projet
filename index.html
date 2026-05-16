@@ -803,7 +803,54 @@
     .sep-text { font-size: 0.62rem; white-space: normal; text-align: center; }
     footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
   }
+
+
+  .btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #25D366;
+  color: #fff;
+  padding: 1rem 2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  border-radius: 2px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-whatsapp::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-whatsapp:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+}
+
+.btn-whatsapp:hover::before { opacity: 1; }
+
+.btn-whatsapp:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37,211,102,0.2);
+}
+
+
 </style>
+
+
+
 </head>
 <body>
 
@@ -905,11 +952,11 @@
         <p>Citoyens algériens, étudiants souhaitant partir à l'étranger, entreprises ayant des documents bilingues à certifier, et diaspora algérienne résidant hors d'Algérie.</p>
       </div>
       <div class="about-block reveal">
-        <h4>🌍 Langues supportées</h4>
-        <p>Arabe, Français, Anglais, Espagnol, Allemand, Turc — avec extension possible selon la demande.</p>
+        <h4>🌍 Tous les Langues supportées</h4>
+        <p>Arabe, Français, Anglais, Espagnol, Allemand, Turc ...(tous) — avec extension possible selon la demande.</p>
       </div>
       <div class="about-block reveal">
-        <h4>🎓 Encadreur</h4>
+        <h4>🎓 Encadrant</h4>
         <p><strong style="color:var(--ink)">M. Farouk Afounas</strong> — Maître de conférences, Département du Français, Faculté des Langues Étrangères, Université Hassiba Benbouali de Chlef.</p>
       </div>
       <div class="about-block reveal">
@@ -931,7 +978,7 @@
     <div class="problem-item reveal"><span class="problem-num">01</span><div class="problem-icon">🚶</div><h3>Déplacement obligatoire</h3><p>Impossible de soumettre un document à distance. Le client doit se rendre physiquement au bureau de traduction.</p></div>
     <div class="problem-item reveal"><span class="problem-num">02</span><div class="problem-icon">🔍</div><h3>Trouver un traducteur = galère</h3><p>Aucun annuaire centralisé des traducteurs assermentés. La recherche se fait par bouche à oreille ou réseaux sociaux.</p></div>
     <div class="problem-item reveal"><span class="problem-num">03</span><div class="problem-icon">💰</div><h3>Zéro transparence</h3><p>Les prix et délais varient d'un bureau à l'autre, sans aucune grille de référence accessible au public.</p></div>
-    <div class="problem-item reveal"><span class="problem-num">04</span><div class="problem-icon">⏳</div><h3>Délais imprévisibles</h3><p>Les étudiants pressés de partir à l'étranger ne peuvent pas se permettre d'attendre des semaines sans visibilité.</p></div>
+    <div class="problem-item reveal"><span class="problem-num">04</span><div class="problem-icon">⏳</div><h3>Délais imprévisibles</h3><p>Les étudiants et les citoyens... , pressés de partir à l'étranger ne peuvent pas se permettre d'attendre des semaines sans visibilité.</p></div>
     <div class="problem-item reveal"><span class="problem-num">05</span><div class="problem-icon">🌍</div><h3>Diaspora laissée de côté</h3><p>Les Algériens résidant à l'étranger n'ont aucun moyen simple d'obtenir des traductions reconnues en Algérie.</p></div>
     <div class="problem-item reveal"><span class="problem-num">06</span><div class="problem-icon">📋</div><h3>Aucun suivi de commande</h3><p>Une fois le document déposé, le client est dans le flou total quant à l'avancement de sa traduction.</p></div>
   </div>
@@ -1022,8 +1069,8 @@
   <div class="flow-steps">
     <div class="flow-step reveal"><div class="step-num">1</div><h4>Upload</h4><p>Le client dépose son document (PDF, Word, image) sur la plateforme</p></div>
     <div class="flow-step reveal"><div class="step-num">2</div><h4>Choix</h4><p>Il choisit un traducteur assermenté selon la langue et la wilaya</p></div>
-    <div class="flow-step reveal"><div class="step-num">3</div><h4>Paiement</h4><p>Paiement sécurisé en ligne via CCP ou carte bancaire</p></div>
-    <div class="flow-step reveal"><div class="step-num">4</div><h4>Traduction</h4><p>Le traducteur reçoit le doc, réalise la traduction et l'envoie</p></div>
+    <div class="flow-step reveal"><div class="step-num">3</div><h4>Traduction</h4><p>Le traducteur reçoit le doc, réalise la traduction et l'envoie</p></div>
+    <div class="flow-step reveal"><div class="step-num">4</div><h4>Paiement</h4><p>Paiement sécurisé en ligne via CCP ou carte bancaire</p></div>
     <div class="flow-step reveal"><div class="step-num">5</div><h4>Livraison</h4><p>Le PDF traduit est débloqué automatiquement après confirmation</p></div>
     <div class="flow-step reveal"><div class="step-num">6</div><h4>Évaluation</h4><p>Le client note le traducteur — le traducteur reçoit sa rémunération</p></div>
   </div>
@@ -1123,7 +1170,7 @@
       <p class="bmc-t">🤝 Partenaires clés</p>
       <ul class="bmc-items">
         <li><strong>Ministère de la Justice (DG)</strong> — légitimité des traducteurs assermentés</li>
-        <li><strong>Barreau d'Algérie</strong> — réseau de traducteurs juridiques accrédités</li>
+        <li><strong>Burreau d'Algérie</strong> — réseau de traducteurs juridiques accrédités</li>
         <li><strong>SATIM / Algérie Poste</strong> — partenaires de paiement électronique local</li>
         <li><strong>Universités algériennes</strong> — canal d'acquisition étudiants (bourses, visa)</li>
         <li><strong>Consulats & ambassades</strong> — demande récurrente de documents traduits</li>
@@ -1264,15 +1311,31 @@
 </section>
 
 <!-- CTA FOOTER -->
+```html
 <section class="cta-section" id="contact">
   <p class="section-label reveal">Projet académique 2025–2026</p>
   <h2 class="reveal">Digitalisez la traduction juridique<br>en Algérie.</h2>
   <p class="reveal">Un projet porté par une étudiante de l'Université Hassiba Benbouali de Chlef, Faculté des langues étrangères, Département du français, sous l'encadrement de M. Farouk Afounas.</p>
   <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap" class="reveal">
     <a href="mailto:benhadjikarima208@gmail.com" class="btn-primary">Karima Benhadji — Réalisatrice</a>
-    <a href="mailto:interpretationworld@gmail.com" class="btn-secondary" style="border-color:rgba(245,242,235,0.3);color:var(--cream)">Farouk Afounas — Encadreur</a>
+    <a href="mailto:interpretationworld@gmail.com" class="btn-secondary" style="border-color:rgba(245,242,235,0.3);color:var(--cream)">Farouk Afounas — Encadrant</a>
+    <a 
+      href="https://wa.me/213676458042" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="btn-whatsapp reveal"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="flex-shrink:0">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.549 4.103 1.508 5.83L.057 23.25a.75.75 0 00.916.919l5.504-1.429A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.694 9.694 0 01-4.953-1.355l-.355-.212-3.668.952.982-3.58-.231-.368A9.699 9.699 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+      </svg>
+      Contacter sur WhatsApp
+    </a>
   </div>
 </section>
+
+
+
 
 <footer>
   <div class="footer-logo">JuriTrans<span>Lingua</span></div>
